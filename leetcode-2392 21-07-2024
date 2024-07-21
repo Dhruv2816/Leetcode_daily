@@ -1,0 +1,67 @@
+class Solution {
+public:
+    vector<int> topologicalSort(int k, vector<vector<int>>& conditions) {
+        vector<int> isvisited(k+1, 0);
+        unordered_map<int, vector<int>> gh;
+
+        for (const auto& n : conditions) {
+            gh[n[0]].push_back(n[1]);
+            ++isvisited[n[1]];
+        }
+
+        queue<int> q;
+        for (int i = 1; i <= k; ++i) {
+            if (isvisited[i] == 0) {
+                q.push(i);
+            }
+        }
+
+        vector<int> order;
+        while (!q.empty()) {
+            int node = q.front();
+            q.pop();
+            order.push_back(node);
+
+            for (int j : gh[node]) {
+                --isvisited[j];
+                if (isvisited[j] == 0) {
+                    q.push(j);
+                }
+            }
+        }
+
+        if (order.size() != k) {
+            return {};
+        }
+
+        return order;
+        
+    }
+
+
+    vector<vector<int>> buildMatrix(int k, vector<vector<int>>& rowConditions, vector<vector<int>>& colConditions) {
+
+        ios_base::sync_with_stdio(false);
+        cin.tie(NULL);
+        vector<vector<int>> ans(k, vector<int>(k, 0));
+
+        const auto rowOrder = topologicalSort(k, rowConditions);
+        const auto colOrder = topologicalSort(k, colConditions);
+
+        if (rowOrder.empty() or colOrder.empty()) {
+            return {};
+        }
+
+        unordered_map<int, int> rowPosition, colPosition;
+        for (int i = 0; i < k; ++i) {
+            rowPosition[rowOrder[i]] = i;
+            colPosition[colOrder[i]] = i;
+        }
+
+        for (int i = 1; i <= k; ++i) {
+            ans[rowPosition[i]][colPosition[i]] = i;
+        }
+
+        return ans;
+    }
+};
