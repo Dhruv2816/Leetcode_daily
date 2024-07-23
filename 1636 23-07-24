@@ -1,0 +1,32 @@
+#include <vector>
+#include <unordered_map>
+#include <algorithm>
+
+using namespace std;
+
+class Solution {
+public:
+    vector<int> frequencySort(vector<int>& nums) {
+        ios_base::sync_with_stdio(false);
+        cin.tie(NULL);
+
+        unordered_map<int, int> freqMap;
+        vector<int> ans;
+
+        for (int n : nums) {
+            freqMap[n]++;
+        }
+
+        vector<pair<int, int>> freqVec(freqMap.begin(), freqMap.end());
+
+        sort(freqVec.begin(), freqVec.end(), [](const pair<int, int>& a, const pair<int, int>& b) {
+            return a.second == b.second ? a.first > b.first : a.second < b.second;
+        });
+
+        for (const auto& p : freqVec) {
+            ans.insert(ans.end(), p.second, p.first);
+        }
+
+        return ans;
+    }
+};
