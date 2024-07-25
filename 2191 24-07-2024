@@ -1,0 +1,31 @@
+class Solution {
+public:
+    vector<int> sortJumbled(vector<int>& mapping, vector<int>& nums) {
+        ios_base::sync_with_stdio(false);
+        cin.tie(NULL);  
+        vector<pair<int,int>> map;
+        vector<int> ans;
+
+        for(auto n:nums){
+            int k = n;
+            int temp = n == 0 ? mapping[0] : 0;
+            int mul = 1;
+            while(k > 0){
+                int remainder = k%10;
+                temp += mul * mapping[remainder];
+                k = k/10;
+                mul *= 10;
+            }
+            map.push_back({temp, n});
+        }
+
+        sort(map.begin(),map.end(),[&](pair<int,int> a, pair<int,int> b){
+            return a.first < b.first;
+        });
+        for (auto n : map){
+            ans.push_back(n.second);
+        }
+        return ans;
+
+    }
+};
