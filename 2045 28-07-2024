@@ -1,0 +1,69 @@
+class Solution {
+public:
+    int time, change;
+    int add_an_edge(int distance)
+    {
+        int quotient = distance / change;
+        if(quotient % 2 == 0)
+        {
+            return distance + time;
+        }
+        else
+        {
+            return (change * (quotient + 1)) + time; 
+        }
+
+    }
+    int secondMinimum(int n, vector<vector<int>>& edges, int time, int change) {
+        this->time = time;
+        this->change = change;
+        vector<vector<int>>adj(n);
+        for(auto &x : edges)
+        {
+            int u = x[0] - 1;
+            int v = x[1] - 1;
+            adj[u].push_back(v);
+            adj[v].push_back(u);
+        }
+        vector<int>sec_min(n,1e8);
+        vector<int>fir_min(n,1e8);
+        fir_min[0] = 0;
+        queue<pair<int,int>>q;
+        q.push({0,0});
+        while(!q.empty())
+        {
+            int node = q.front().first;
+            int distance = q.front().second;
+            q.pop();
+            for(auto &x : adj[node])
+            {
+                int quotient = distance / change;
+                int curr_distance = distance;
+                if(quotient % 2 == 0)
+                {
+                    curr_distance = distance + time;
+                }
+                else
+                {
+                    curr_distance = (change * (quotient + 1)) + time; 
+                }
+                if(curr_distance < fir_min[x])
+                {
+                        sec_min[x] = fir_min[x];
+                        fir_min[x] = curr_distance;
+                        q.push({x,curr_distance});
+                }
+                else if(curr_distance > fir_min[x] && curr_distance < sec_min[x])
+                {
+                        sec_min[x] = curr_distance;
+                        q.push({x,curr_distance});
+                }
+            }
+        }
+        if(sec_min[n - 1] != 1e8) return sec_min[n - 1];
+        int min_dist = fir_min[n - 1];
+        min_dist = add_an_edge(min_dist);
+        min_dist = add_an_edge(min_dist);
+        return min_dist;
+    }
+};
